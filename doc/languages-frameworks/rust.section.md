@@ -237,6 +237,22 @@ rustPlatform.buildRustPackage rec {
 }
 ```
 
+### Specific cargo flags
+
+Some packages may require specific cargo flags.
+It is especially necessary when building a binary from a repository with multiple workspaces.
+
+One can specify cargo flags using `cargoBuildFlags`:
+```
+{ lib, rustPlatform, fetchFromGitHub }:
+
+rustPlatform.buildRustPackage rec {
+  (...)
+  # Only build cargo-insta package
+  cargoBuildFlags = [ "-p cargo-insta" ];
+}
+```
+
 ## Compiling Rust crates using Nix instead of Cargo
 
 ### Simple operation
