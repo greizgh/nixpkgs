@@ -1917,6 +1917,8 @@ in {
 
   django-filter = callPackage ../development/python-modules/django-filter { };
 
+  django-formtools = callPackage ../development/python-modules/django-formtools { };
+
   django-gravatar2 = callPackage ../development/python-modules/django-gravatar2 { };
 
   django_guardian = callPackage ../development/python-modules/django_guardian { };
