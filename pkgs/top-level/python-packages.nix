@@ -7680,6 +7680,8 @@ in {
 
   seabreeze = callPackage ../development/python-modules/seabreeze { };
 
+  seaserv = toPythonModule pkgs.seafile-server;
+
   seccomp = callPackage ../development/python-modules/seccomp { };
 
   secp256k1 = callPackage ../development/python-modules/secp256k1 {
