@@ -204,7 +204,7 @@ in {
               ${pkgs.sqlite}/bin/sqlite3 ${ccnetDir}/OrgMgr/orgmgr.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/org.sql"
               ${pkgs.sqlite}/bin/sqlite3 ${ccnetDir}/PeerMgr/usermgr.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/user.sql"
               ${pkgs.sqlite}/bin/sqlite3 ${dataDir}/seafile.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/seafile.sql"
-              echo "${cfg.seafilePackage.version}" > "${seafRoot}"/setup-server
+              echo "${cfg.seafilePackage.version}-sqlite" > "${seafRoot}"/setup-server
           fi
         '';
       };
@@ -264,7 +264,7 @@ in {
               ${pkgs.python3Packages.seahub}/manage.py migrate
               # create admin account
               ${pkgs.expect}/bin/expect -c 'spawn ${pkgs.python3Packages.seahub}/manage.py createsuperuser --email=${cfg.adminEmail}; expect "Password: "; send "${cfg.initialAdminPassword}\r"; expect "Password (again): "; send "${cfg.initialAdminPassword}\r"; expect "Superuser created successfully."'
-              echo "${pkgs.python3Packages.seahub.version}" > "${seafRoot}/seahub-setup"
+              echo "${pkgs.python3Packages.seahub.version}-sqlite" > "${seafRoot}/seahub-setup"
           fi
         '';
       };
