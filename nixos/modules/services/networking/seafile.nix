@@ -176,6 +176,7 @@ in {
         partOf = [ "seafile.target" ];
         after = [ "network.target" ];
         wantedBy = [ "seafile.target" ];
+        restartTriggers = [ ccnetConf seafileConf ];
         serviceConfig = securityOptions // {
           User = "seafile";
           Group = "seafile";
@@ -217,6 +218,7 @@ in {
         partOf = [ "seafile.target" ];
         after = [ "network.target" "seaf-server.service" ];
         requires = [ "seaf-server.service" ];
+        restartTriggers = [ seahubSettings ];
         environment = {
           PYTHONPATH =
             "${pkgs.python3Packages.seahub}/thirdpart:${pkgs.python3Packages.seahub}:${penv}/${python.sitePackages}";
