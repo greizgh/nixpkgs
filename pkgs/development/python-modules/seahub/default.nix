@@ -2,13 +2,13 @@
 
 python3Packages.buildPythonPackage rec {
   pname = "seahub";
-  version = "8.0.4";
+  version = "8.0.5";
 
   src = fetchFromGitHub {
     owner = "haiwen";
     repo = "seahub";
     rev = "v${version}-server";
-    sha256 = "0wi1m6k1km2n17s19jxg05jhmv7x59w92mijnay786ghhakd9y1r";
+    sha256 = "0m91iby9jzldsf2avny04mvpcjkk3v45bbkk5l404g3q8z98xd5k";
   };
 
   dontBuild = true;
