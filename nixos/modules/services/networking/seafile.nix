@@ -197,7 +197,7 @@ in {
           '';
         };
         preStart = ''
-          if [ ! -f "${seafRoot}/setup-server" ]; then
+          if [ ! -f "${seafRoot}/server-setup" ]; then
               mkdir -p ${dataDir}/library-template
               mkdir -p ${ccnetDir}/{GroupMgr,misc,OrgMgr,PeerMgr}
               ${pkgs.sqlite}/bin/sqlite3 ${ccnetDir}/GroupMgr/groupmgr.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/groupmgr.sql"
@@ -205,7 +205,15 @@ in {
               ${pkgs.sqlite}/bin/sqlite3 ${ccnetDir}/OrgMgr/orgmgr.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/org.sql"
               ${pkgs.sqlite}/bin/sqlite3 ${ccnetDir}/PeerMgr/usermgr.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/user.sql"
               ${pkgs.sqlite}/bin/sqlite3 ${dataDir}/seafile.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/seafile.sql"
-              echo "${cfg.seafilePackage.version}-sqlite" > "${seafRoot}"/setup-server
+              echo "${cfg.seafilePackage.version}-sqlite" > "${seafRoot}"/server-setup
+          fi
+          installedMajor=$(cat "${seafRoot}/server-setup" | cut -d"-" -f1 | cut -d"." -f1)
+          installedMinor=$(cat "${seafRoot}/server-setup" | cut -d"-" -f1 | cut -d"." -f2)
+          pkgMajor=$(echo "${cfg.seafilePackage.version}" | cut -d"." -f1)
+          pkgMinor=$(echo "${cfg.seafilePackage.version}" | cut -d"." -f2)
+          if [ $installedMajor != $pkgMajor ] || [ $installedMinor != $pkgMinor ]; then
+              echo "Unsupported upgrade" >&2
+              exit 1
           fi
         '';
       };
@@ -266,6 +274,15 @@ in {
               ${pkgs.python3Packages.seahub}/manage.py migrate
               # create admin account
               ${pkgs.expect}/bin/expect -c 'spawn ${pkgs.python3Packages.seahub}/manage.py createsuperuser --email=${cfg.adminEmail}; expect "Password: "; send "${cfg.initialAdminPassword}\r"; expect "Password (again): "; send "${cfg.initialAdminPassword}\r"; expect "Superuser created successfully."'
+              echo "${pkgs.python3Packages.seahub.version}-sqlite" > "${seafRoot}/seahub-setup"
+          fi
+          if [ $(cat "${seafRoot}/seahub-setup" | cut -d"-" -f1) != "${pkgs.python3Packages.seahub.version}" ]; then
+              # Link all media except avatars
+              for m in `find ${pkgs.python3Packages.seahub}/media/ -maxdepth 1 -not -name "avatars"`; do
+                ln -sf $m ${seahubDir}/media/
+              done
+              # update database
+              ${pkgs.python3Packages.seahub}/manage.py migrate
               echo "${pkgs.python3Packages.seahub.version}-sqlite" > "${seafRoot}/seahub-setup"
           fi
         '';
