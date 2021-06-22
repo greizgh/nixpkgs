@@ -257,16 +257,16 @@ in {
           '';
         };
         preStart = ''
+          mkdir -p ${seahubDir}/media
+          # Link all media except avatars
+          for m in `find ${pkgs.python3Packages.seahub}/media/ -maxdepth 1 -not -name "avatars"`; do
+            ln -sf $m ${seahubDir}/media/
+          done
           if [ ! -e "${seafRoot}/.seahubSecret" ]; then
               ${penv}/bin/python ${pkgs.python3Packages.seahub}/tools/secret_key_generator.py > ${seafRoot}/.seahubSecret
               chmod 400 ${seafRoot}/.seahubSecret
           fi
           if [ ! -f "${seafRoot}/seahub-setup" ]; then
-              mkdir -p ${seahubDir}/media
-              # Link all media except avatars
-              for m in `find ${pkgs.python3Packages.seahub}/media/ -maxdepth 1 -not -name "avatars"`; do
-                ln -s $m ${seahubDir}/media/
-              done
               # avatars directory should be writable
               install -D -t ${seahubDir}/media/avatars/ ${pkgs.python3Packages.seahub}/media/avatars/default.png
               install -D -t ${seahubDir}/media/avatars/groups ${pkgs.python3Packages.seahub}/media/avatars/groups/default.png
@@ -277,10 +277,6 @@ in {
               echo "${pkgs.python3Packages.seahub.version}-sqlite" > "${seafRoot}/seahub-setup"
           fi
           if [ $(cat "${seafRoot}/seahub-setup" | cut -d"-" -f1) != "${pkgs.python3Packages.seahub.version}" ]; then
-              # Link all media except avatars
-              for m in `find ${pkgs.python3Packages.seahub}/media/ -maxdepth 1 -not -name "avatars"`; do
-                ln -sf $m ${seahubDir}/media/
-              done
               # update database
               ${pkgs.python3Packages.seahub}/manage.py migrate
               echo "${pkgs.python3Packages.seahub.version}-sqlite" > "${seafRoot}/seahub-setup"
