@@ -207,6 +207,8 @@ in {
               ${pkgs.sqlite}/bin/sqlite3 ${dataDir}/seafile.db ".read ${cfg.seafilePackage}/share/seafile/sql/sqlite/seafile.sql"
               echo "${cfg.seafilePackage.version}-sqlite" > "${seafRoot}"/server-setup
           fi
+          # checking for upgrades and handling them
+          # WARNING: needs to be extended to actually handle major version migrations
           installedMajor=$(cat "${seafRoot}/server-setup" | cut -d"-" -f1 | cut -d"." -f1)
           installedMinor=$(cat "${seafRoot}/server-setup" | cut -d"-" -f1 | cut -d"." -f2)
           pkgMajor=$(echo "${cfg.seafilePackage.version}" | cut -d"." -f1)

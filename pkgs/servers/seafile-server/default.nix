@@ -14,7 +14,7 @@ in stdenv.mkDerivation rec {
     owner = "haiwen";
     repo = "seafile-server";
     rev = "v${version}-server";
-    sha256 = "0yki9y5p33xbznjpawmsfm52qa8njlnzmnfqnfsk07iz53m58dyx";
+    sha256 = "sha256-OBv0oPLC2g6ApgD9lzj027nGHt7vOjlF88oeSmEPAdk=";
   };
 
   nativeBuildInputs = [ autoreconfHook pkg-config ];

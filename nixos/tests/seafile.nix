@@ -2,12 +2,12 @@ import ./make-test-python.nix ({ pkgs, ... }:
   let
     client = { config, pkgs, ... }: {
       virtualisation.memorySize = 256;
-      environment.systemPackages = [ pkgs.seafile-shared ];
+      environment.systemPackages = [ pkgs.seafile-shared curl ];
     };
   in {
     name = "seafile";
     meta = with pkgs.stdenv.lib.maintainers; {
-      maintainers = [ kampfschlaefer ];
+      maintainers = [ kampfschlaefer schmittlauch ];
     };
 
     nodes = {
@@ -55,6 +55,9 @@ import ./make-test-python.nix ({ pkgs, ... }:
           server.wait_for_unit("nginx.service")
           server.wait_for_file("/run/seahub/gunicorn.sock")
 
+      with subtest("client1 fetch seahub page"):
+          client1.succeed("curl -L http://server | grep 'Log In' >&2")
+      
       with subtest("client1 connect"):
           client1.wait_for_unit("default.target")
           client1.succeed("seaf-cli init -d . >&2")
